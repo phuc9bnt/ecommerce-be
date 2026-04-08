@@ -15,7 +15,9 @@ export class NotificationComponent implements OnInit, OnDestroy {
   notifications: Notification[] = [];
   newTitle = '';
   newMessage = '';
+  errorMessage = '';
   private subscription: Subscription | null = null;
+  private errorSubscription: Subscription | null = null;
 
   constructor(private readonly signalrService: SignalrService) {}
 
@@ -26,13 +28,23 @@ export class NotificationComponent implements OnInit, OnDestroy {
         this.notifications.unshift(notification);
       }
     );
+    this.errorSubscription = this.signalrService.connectionError$.subscribe(
+      (error) => {
+        this.errorMessage = error;
+      }
+    );
   }
 
   async sendNotification(): Promise<void> {
     if (this.newTitle.trim() && this.newMessage.trim()) {
-      await this.signalrService.sendNotification(this.newTitle, this.newMessage);
-      this.newTitle = '';
-      this.newMessage = '';
+      try {
+        await this.signalrService.sendNotification(this.newTitle, this.newMessage);
+        this.newTitle = '';
+        this.newMessage = '';
+        this.errorMessage = '';
+      } catch (err) {
+        this.errorMessage = err instanceof Error ? err.message : 'Failed to send notification.';
+      }
     }
   }
 
@@ -42,6 +54,7 @@ export class NotificationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    this.errorSubscription?.unsubscribe();
     this.signalrService.stopConnection();
   }
 }

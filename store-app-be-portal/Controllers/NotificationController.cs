@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using store_app_be_portal.Hubs;
@@ -16,5 +17,7 @@ namespace store_app_be_portal.Controllers
         }
     }
 
-    public record NotificationRequest(string Title, string Message);
+    public record NotificationRequest(
+        [Required, MaxLength(200)] string Title,
+        [Required, MaxLength(2000)] string Message);
 }

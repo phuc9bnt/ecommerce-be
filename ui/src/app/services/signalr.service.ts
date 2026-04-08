@@ -15,8 +15,10 @@ export interface Notification {
 export class SignalrService implements OnDestroy {
   private hubConnection: signalR.HubConnection | null = null;
   private notificationSubject = new Subject<Notification>();
+  private connectionErrorSubject = new Subject<string>();
 
   notification$ = this.notificationSubject.asObservable();
+  connectionError$ = this.connectionErrorSubject.asObservable();
 
   startConnection(): void {
     if (this.hubConnection) {
@@ -41,7 +43,10 @@ export class SignalrService implements OnDestroy {
 
     this.hubConnection
       .start()
-      .catch((err) => console.error('SignalR connection error:', err));
+      .catch((err) => {
+        const errorMsg = err instanceof Error ? err.message : 'Unknown connection error';
+        this.connectionErrorSubject.next(errorMsg);
+      });
   }
 
   stopConnection(): void {
@@ -50,12 +55,15 @@ export class SignalrService implements OnDestroy {
   }
 
   async sendNotification(title: string, message: string): Promise<void> {
-    if (this.hubConnection) {
-      await this.hubConnection.invoke('SendNotification', title, message);
+    if (!this.hubConnection) {
+      throw new Error('SignalR connection is not established.');
     }
+    await this.hubConnection.invoke('SendNotification', title, message);
   }
 
   ngOnDestroy(): void {
+    this.notificationSubject.complete();
+    this.connectionErrorSubject.complete();
     this.stopConnection();
   }
 }
