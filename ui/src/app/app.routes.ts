@@ -18,6 +18,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'notifications',
+    loadComponent: () =>
+      import('./components/notification/notification.component').then(
+        (m) => m.NotificationComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: '',
     redirectTo: '/products',
     pathMatch: 'full',
