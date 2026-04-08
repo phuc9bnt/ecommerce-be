@@ -1,0 +1,48 @@
+<div class="notification-page">
+  <h2>📢 Real-Time Notifications (SignalR)</h2>
+
+  <div class="send-section">
+    <h3>Send a Notification</h3>
+    @if (errorMessage) {
+      <div class="error-banner">{{ errorMessage }}</div>
+    }
+    <div class="form-group">
+      <input
+        type="text"
+        [(ngModel)]="newTitle"
+        placeholder="Notification title"
+        class="form-input"
+      />
+      <input
+        type="text"
+        [(ngModel)]="newMessage"
+        placeholder="Notification message"
+        class="form-input"
+      />
+      <button class="send-btn" (click)="sendNotification()">Send</button>
+    </div>
+  </div>
+
+  <div class="notifications-section">
+    <div class="section-header">
+      <h3>Received Notifications</h3>
+      @if (notifications.length > 0) {
+        <button class="clear-btn" (click)="clearNotifications()">Clear All</button>
+      }
+    </div>
+
+    @if (notifications.length === 0) {
+      <p class="empty-state">No notifications yet. Send one or wait for incoming notifications.</p>
+    }
+
+    <div class="notification-list">
+      @for (notification of notifications; track notification.timestamp) {
+        <div class="notification-card">
+          <div class="notification-title">{{ notification.title }}</div>
+          <div class="notification-message">{{ notification.message }}</div>
+          <div class="notification-time">{{ notification.timestamp | date: 'medium' }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -8,5 +8,11 @@
     "target": "http://localhost:5130",
     "secure": false,
     "changeOrigin": true
+  },
+  "/notificationHub": {
+    "target": "http://localhost:5130",
+    "secure": false,
+    "changeOrigin": true,
+    "ws": true
   }
 }
