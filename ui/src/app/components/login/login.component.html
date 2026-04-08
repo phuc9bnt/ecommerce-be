@@ -1,0 +1,43 @@
+<div class="login-container">
+  <div class="login-card">
+    <h2>Store App Login</h2>
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          [(ngModel)]="username"
+          name="username"
+          placeholder="Enter your username"
+          autocomplete="username"
+        />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        />
+      </div>
+      @if (errorMessage) {
+        <div class="error-message">{{ errorMessage }}</div>
+      }
+      <button type="submit" [disabled]="isLoading">
+        {{ isLoading ? 'Logging in...' : 'Login' }}
+      </button>
+    </form>
+    <div class="demo-credentials">
+      <p><strong>Demo credentials:</strong></p>
+      <ul>
+        <li>johndoe / password123</li>
+        <li>janesmith / password123</li>
+        <li>bobjohnson / password123</li>
+      </ul>
+    </div>
+  </div>
+</div>
